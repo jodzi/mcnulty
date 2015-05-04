@@ -30,7 +30,7 @@ from sklearn.learning_curve import learning_curve
 #columns = ['Class Name', 'handicapped-infants', 'water-project-cost-sharing', 'adoption-of-the-budget-resolution', 'physician-fee-freeze', 'el-salvador-aid', 'religious-groups-in-schools', 'anti-satellite-test-ban', 'aid-to-nicaraguan-contras', 'mx-missile', 'immigration', 'synfuels-corporation-cutback', 'education-spending', 'superfund-right-to-sue', 'crime, duty-free-exports', 'export-administration-act-south-africa']
 #
 #votes = pd.read_csv('votes.csv', index_col=False, names=columns, converters=converter)
-
+#
 # Calculates the mean 
 #means = [votes[columns[i]].mean() for i in range(1,len(votes.columns))]
 ## Creates the dictionary of means to replace NA's
