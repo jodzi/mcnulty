@@ -11,19 +11,22 @@
 
   input[type="radio"]{
   		margin: 0 10px 0 10px;
-  		}
+  }
 
   input[type="checkbox"]{
   		margin: 0 10px 0 10px;
-  		}
+  }
 
   #today{
   		position: relative;
-  		top: -125px;
+  		top: -575px;
   		right: 35px;
   		border: 1px solid black;
   }
 
+  #menu>ul>li:hover>ul { 
+    	bottom:100%;
+  }
 
   </style>
 
@@ -220,15 +223,19 @@
     		
 			 
 		<script>
+
+		var borderRadiusX = 20;
+
+		var borderRadiusY = (20);
+
 		var chart = d3.select("#bar_chart")
       		.append("svg")
-        	.attr("width", 800)
+        	.attr("width", 700)
         	.attr("height", 100);
 
-        //Need to come up with a scale related to the data probability
         var prob_scale = d3.scale.linear()
-      		.domain([0, 100])
-      		.range([0, 800]);
+      		.domain([0, 1])
+      		.range([0, 700]);
 
         var bar = chart.append("g")
                    .attr("class", "bar")
@@ -236,82 +243,88 @@
         bar.append("svg:rect")
       	 	.attr("id", "probbar")
       		.attr("class", "bar")
-      		.attr("fill", "red")
-      		//Will need to adjust width to account for data scale
-      		.attr("width", prob_scale(prob))
-      		.attr("height", 50);
+      		.attr("fill", "steelblue")
+      		.attr("stroke", "orange")
+      		.attr("stroke-width", 2)
+      		.attr("width", 350)
+      		.attr("height", 50)
+      		.attr("ry", borderRadiusX)
+      		.attr("rx", borderRadiusY);
 
       	bar.append("text")
         	.attr("id", "percent_text")
         	.attr("dy", ".75em")
         	.attr("y", 15)
-        	.attr("x", 100)
-        	//Need to adjust to account for data
-        	//.attr("x", chance_scale(current_risk-5))
+        	.attr("x", 325)
         	.attr("text-anchor", "middle")
         	.attr("fill", "white")
         	.attr("font-size", 20)
-        	.text("Placeholder for text")
-        	//Need to adjust to account for data
-        	//.text( current_risk.toFixed(1) + "%");
+        	.text(50 + "%");
 
 		// Initialize slider
-		var slider = d3.slider().min(20).max(90).ticks(15).showRange(true);
+		step_values = [];
+		for (i = 20; i < 90; i++){
+			step_values.push(i);
+		};
+
+		var slider = d3.slider().min(20).max(90).ticks(15).stepValues(step_values).showRange(true);
 		// Render the slider in the div
 		d3.select('#slider')
 			.call(slider);
 
+		window.setInterval(function(){
+				age = slider.value();
+			}, 200);
+
 
 		function get_probability(){
 
-			age = slider.value()
-
 			//Get the month's value to index into and get the month's coefficient
-			month = document.getElementById('select_month').value
-			month_coefs = {'1': 0, '2': 0, '3': 0, '4': -0.17013001794624028, '8': -0.13606014417372908, 
-						   '9': -0.45441604066029223, '12': 0.19921209071114718, '7': 0.100868996989705, 
-						   '6': 0.32336746751576051, '5': -0.71151225875258073, '11': -0.11720332089236263, 
-						   '10': 0.034294595675198762};
+			var month = document.getElementById('select_month').value;
+			var month_coefs = {'1': 0, '2': 0, '3': 0, '4': -0.20141961606777251, '8': 0.064813062215630865, 
+						   '9': -0.21511793787486069, '12': 0.10769586077564967, '7': 0.15149695146889047, 
+						   '6': 0.1772762150911277, '5': -0.69310360131128412, '11': -0.36951603944299366, 
+						   '10': -0.018207144225059611};
 
 			//Get the day's value to index into and get the day's coefficient
-			day = document.getElementById('select_day').value
-			day_coefs = {'5': 0.062458721723370712, '1': 0.0058157690524025885, 
-						 '4': 0.11281842437414215, '2': -0.1206978973538039, '3': 0};
+			var day = document.getElementById('select_day').value;
+			var day_coefs = {'5': -0.15730616324683958, '1': -0.33833219438302897, 
+						 '4': 0-0.093926716476159106, '2': -0.081208204301114958, '3': 0};
 
 			//Get the call type for coefficient
-			call = document.getElementById('call_type').value
-			call_coefs = {'1': 0, '2': -0.76033983998142296}
+			var call = document.getElementById('call_type').value;
+			var call_coefs = {'1': 0, '2': -0.52081248335373787};
 
 			//Get an array of all selected radio and checkbox inputs; used to get their coefficients
-			radio_features = $.map($("input:radio:checked"), function(elem){return $(elem).val();});
-			checkbox_features = $.map($("input:checkbox:checked"), function(elem){return $(elem).val();});			
+			var radio_features = $.map($("input:radio:checked"), function(elem){return $(elem).val();});
+			var checkbox_features = $.map($("input:checkbox:checked"), function(elem){return $(elem).val();});			
 			
-			feature_coefs = {'admin': 0.12240509818632118, 'entre': -0.20083956177800003, 'blue': 0, 
-							 'house': 0.16518904817400865, 'manage': -0.30229935786210521, 
-							 'retired': -0.17289725259347491, 'self': -0.042935699031480583, 
-							 'services': 0.13048128388463515, 'student': 0.03173591045623636, 
-							 'tech': 0.17704270122710883, 'unemp': 0.2369673426454682,
-							 'divorced': 0.011927654623306498, 'single': 0.01483622086341925, 'married': 0,
-							 'fouryear': -0.48974757732023166,'sixyear': -0.17283280096342471, 
-							 'nineyear': 0.31244717905491881, 'highschool': 0.11902499271975939,
-							 'illiterate': -0.02740848711172288, 'prof': -0.0062624464460797067, 'degree': 0, 
-							 'housing': 0.076032019623572714, 'personal': -0.12359571436391532, 
-							 'default': -0.0060738727652772358};
+			var feature_coefs = {'admin': 0.021134525573753452, 'entre': -0.076669225028968044, 'blue': 0, 
+							 'house': -0.014586589657395425, 'manage': 0.024818675265214557	, 
+							 'retired': 0.29448367227073335, 'self': -0.044599781798795993, 
+							 'services': -0.11042167856591234, 'student': 0.23840316574265405, 
+							 'tech': 0.028370432637853275, 'unemp': 0.047761628700745136,
+							 'divorced': -0.10793502363633466, 'single': -0.038484665523676034, 'married': 0,
+							 'fouryear': -0.1214762582711216,'sixyear': -0.015852423707742969, 
+							 'nineyear': -0.18491561493573705, 'highschool': -0.090771806160621998,
+							 'illiterate': -0.0014209263575190277, 'prof': -0.11512153339435607, 'degree': 0, 
+							 'housing': -0.041008084259231692, 'personal': 0.059407521204563322, 
+							 'default': -0.0018244460989285767};
 
 			//Intercept
-			var log_intercept = 0.0028727;
+			var log_intercept = 0.00244022;
 
-			//Age mean/std = 39.0110957004, 10.0528362304
+			var age_val = ((age - 38.9884260344) / 10.2740439307) * 0.00010561515631623113;
 
 			//Get the number inputs for the macro data, scales them, and multiplies by their coefficients
-			emp_rate = ((d3.select("#emp_var_rate").node().value - -0.0342579750347) / 1.59074291039) * -0.30596712603746062;
-			cons_price = ((d3.select("#cons_price_idx").node().value - 93.5391391586) / 0.586995613887) * 0.45907663306645952;
-			cons_conf = ((d3.select("#cons_conf_idx").node().value - -40.6429033749) / 4.68400049543) * 0.033017224942857658;
-			euribor = ((d3.select("#euribor3m").node().value - 3.49096948682) / 1.76955276091) * -0.0033099688273541842;
-			nr_emp = ((d3.select("#nr_employed").node().value - 5161.56042534) / 76.3772589995) * -0.0085402395153031645;
+			var emp_rate = ((d3.select("#emp_var_rate").node().value - -0.0711869172016) / 1.60942547371) * -0.35599149600886337;
+			var cons_price = ((d3.select("#cons_price_idx").node().value - 93.5211947425) / 0.584722094482) * 0.45704662911204724;
+			var cons_conf = ((d3.select("#cons_conf_idx").node().value - -40.5883463755) / 4.79083757089) * 0.013503667487591783;
+			var euribor = ((d3.select("#euribor3m").node().value - 3.46187006232) / 1.77626917605) * 0.073213791894367539;
+			var nr_emp = ((d3.select("#nr_employed").node().value - 5160.85539103) / 75.1515060616) * -0.0085623324260253406;
 
 			//Sums up the radio and checkbox coefficients
-			sum = 0
+			var sum = 0
 			for (i = 0; i < radio_features.length; i++){
 				sum += feature_coefs[radio_features[i]];
 			};
@@ -323,9 +336,19 @@
 			var prob = 1 / (1 + Math.exp(-(log_intercept + month_coefs[month] + day_coefs[day] + sum + emp_rate + cons_price 
 						+ cons_conf + euribor + nr_emp + call_coefs[call])));
 
+			d3.select("#probbar")
+				.transition()
+				.duration(1500)
+            	.attr("width", prob_scale(prob));
+            d3.select("#percent_text")
+                .transition()
+                .duration(1700)
+                .attr("x", prob_scale(prob-.05))
+                //.text(100 * prob.toPrecision(2) + "%");
+                .text(Number(100 * Math.round(prob + 'e2') + 'e-2') + "%");
 			//console.log(prob);
-			return prob
-		}
+			return prob;
+		};
 
 
 		d3.selectAll("input[type='radio']").on("click", function(){
@@ -340,12 +363,6 @@
 			get_probability()
 		});
 
-		var prob = get_probability(); 
-            d3.select("#probbar")
-                .attr("width", prob_scale(prob));
-            //d3.select("#percent_text")
-             //    .attr("x", chance_scale(prob-5))
-              //   .text(chance.toFixed(1) + "%");*/
 		</script>
 
 		</div>
