@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<link rel="stylesheet" type="text/css" href="javascripts/d3.slider.css" media="screen" />
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="javascripts/d3.slider.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  </head>
+
+  <style>
+
+  input[type="radio"]{
+  		margin: 0 10px 0 10px;
+  		}
+
+  input[type="checkbox"]{
+  		margin: 0 10px 0 10px;
+  		}
+
+  #today{
+  		position: relative;
+  		top: -125px;
+  		right: 35px;
+  		border: 1px solid black;
+  }
+
+
+  </style>
+
+  <body>
+
+  		<div id="chart_area" class="wrapper">
+	    <h2>Likelihood of Customer Subscribing to Term Deposit</h2>
+	    <p class="space"></p>
+	    <div id="bar_chart"></div>
+	    </div>
+
+		<h4 class="feature">Age: </h4>
+		<div id="slider" class="wrapper"></div>
+
+		<h4 class="feature">Job: </h4>
+			<input type="radio" name="job" value="admin"/>
+				Admin
+			 <input type="radio" name="job" value="entre"/>
+			 	Entrepreneur
+			 <input type="radio" name="job" value="blue"/>
+			 	Blue Collar
+			 <input type="radio" name="job" value="house"/>
+			 	Housemaid
+			 <input type="radio" name="job" value="manage"/>
+			 	Management
+			 <input type="radio" name="job" value="retired"/>
+			 	Retired
+			 <input type="radio" name="job" value="self"/>
+			 	Self-Employed	
+			 <input type="radio" name="job" value="services"/>
+			 	Services
+			 <input type="radio" name="job" value="student"/>
+			 	Student
+			 <input type="radio" name="job" value="tech"/>
+			 	Technician
+			 <input type="radio" name="job" value="unemp"/>
+			 	Unemployed
+
+
+		<h4 class="feature">Education: </h4>
+			<input type="radio" name="education" value="fouryear"/>
+			 	Basic 4 Year
+			 <input type="radio" name="education" value="sixyear"/>
+			 	Basic 6 Year
+			 <input type="radio" name="education" value="nineyear"/>
+			 	Basic 9 Year
+			 <input type="radio" name="education" value="highschool"/>
+			 	High School
+			 <input type="radio" name="education" value="illiterate"/>
+			 	Illiterate
+			 <input type="radio" name="education" value="prof"/>
+			 	Prof. Course
+			 <input type="radio" name="education" value="degree"/>
+			 	Univ. Degree
+
+		<h4 class="feature">Marital: </h4>
+			<input type="radio" name="marital" value="divorced"/>
+			 	Divorced
+			 <input type="radio" name="marital" value="single"/>
+			 	Single
+			 <input type="radio" name="marital" value="married"/>
+			 	Married
+
+		<h4 class="feature">Financial: </h4>
+			<input type="checkbox" name="financial" value="housing">
+					Housing Loan
+			<input type="checkbox" name="financial" value="personal">
+					Personal Loan
+			<input type="checkbox" name="financial" value="default">
+					Credit Default
+
+		    <table id='today' class="pure-table" align="right">
+    			<thead>
+    				<tr align='center'>
+    					<td><b>Call day</b></td>
+    					<td><b>Social and economic context indicators</b></td>
+    				</tr>
+    			</thead>
+    		<tbody>
+    			<tr>
+    				<td>
+ 						<table>
+ 							<tbody>
+    							<tr>
+    								<td>
+    									<div id="option_day">
+        									<label for="select_day">Day of the week</label>
+        								</div>
+        							</td>
+        							<td>
+        								<select type='select' style='color:steelblue;font-size:1.1em;' name='select_day' 
+        										id='select_day' onchange="get_probability()">
+				            				<option value='1' name='mon' selected='true' >Monday</option>
+				            				<option value='2' name='tue'>Tuesday</option>
+				            				<option value='3' name='wed'>Wednesday</option>
+				            				<option value='4' name='thu'>Thursday</option>
+				            				<option value='5' name='fri'>Friday</option>
+        								</select>
+  									</td>
+  								</tr>
+    							<tr>
+    								<td>
+    									<div id="option">
+    										</br>
+    										</br>
+        									<label for="select_month">Month</label>
+        								</div>
+        							</td>
+        							<td>
+        								</br>
+        								</br>
+        								<select type='select' style='color:steelblue;font-size:1.1em;' name='select_month' 
+        										id='select_month' onchange="get_probability()">
+				            				<option value='1' name='Jan' selected='true' >January</option>
+				            				<option value='2' name='Feb'>February</option>
+								            <option value='3' name='Mar'>March</option>
+								            <option value='4' name='Apr'>April</option>
+								            <option value='5' name='May'>May</option>
+								            <option value='6' name='Jun'>June</option>
+								            <option value='7' name='Jul'>July</option>
+								            <option value='8' name='Aug'>August</option>
+								            <option value='9' name='Sep'>September</option>
+								            <option value='10' name='Oct'>October</option>
+								            <option value='11' name='Nov'>November</option>
+								            <option value='12' name='Dec'>December</option>
+        								</select>
+    								</td>
+    							</tr>
+    							<tr>
+    								<td>
+    									<div id="calltype">
+    										</br>
+    										</br>
+        									<label for="call_type">Call Type</label>
+        								</div>
+        							</td>
+        							<td>
+        								</br>
+        								</br>
+        								<select type='select' style='color:steelblue;font-size:1.1em;' name='call_type' 
+        										id='call_type' onchange="get_probability()">
+				            				<option value='1' name='Cellular' selected='true' >Cellular</option>
+				            				<option value='2' name='Telephone'>Telephone</option>
+        								</select>
+    								</td>
+    							</tr>
+    						</tbody>
+    					</table>
+    				</td>
+    				<td>
+        				<table>
+        					<tbody>
+	            				<tr>
+	            					<td>Employment variation rate % </td>
+	            					<td>
+	            						<input type="number" min="-10" max="10" step="1" value="-2" id="emp_var_rate">
+	            						<br/>
+	            					</td>
+	            				</tr>
+					            <tr>
+					            	<td>Consumer price index % </td>
+					            	<td>
+					            		<input type="number" min="85" max="100" step="2" value="93" id="cons_price_idx">
+					            		<br/>
+					            	</td>
+					            </tr>
+					            <tr>
+					            	<td>Consumer confidence index % </td>
+					            	<td>
+					            		<input type="number" min="-75" max="50" step="5" value="-25" id="cons_conf_idx">
+					            		<br/>
+					            	</td>
+					            </tr>
+					            <tr>
+					            	<td>Euribor 3 month rate % </td>
+					            	<td>
+					            		<input type="number" min="0" max="15" step="0.2" value="0.2" id="euribor3m">
+					            		<br/>
+					            	</td>
+					            </tr>
+					            <tr>
+					            	<td>Number of employees </td>
+					            	<td>
+					            		<input type="number" min="4500" max="5500" step="100" value="4900" id="nr_employed">
+					            		<br/>
+					            	</td>
+					            </tr>
+					        </tbody>
+        				</table>
+    				</td>
+    			</tr>
+    		</tbody>
+    	</table>
+    		
+			 
+		<script>
+		var chart = d3.select("#bar_chart")
+      		.append("svg")
+        	.attr("width", 800)
+        	.attr("height", 100);
+
+        //Need to come up with a scale related to the data probability
+        var prob_scale = d3.scale.linear()
+      		.domain([0, 100])
+      		.range([0, 800]);
+
+        var bar = chart.append("g")
+                   .attr("class", "bar")
+
+        bar.append("svg:rect")
+      	 	.attr("id", "probbar")
+      		.attr("class", "bar")
+      		.attr("fill", "red")
+      		//Will need to adjust width to account for data scale
+      		.attr("width", prob_scale(prob))
+      		.attr("height", 50);
+
+      	bar.append("text")
+        	.attr("id", "percent_text")
+        	.attr("dy", ".75em")
+        	.attr("y", 15)
+        	.attr("x", 100)
+        	//Need to adjust to account for data
+        	//.attr("x", chance_scale(current_risk-5))
+        	.attr("text-anchor", "middle")
+        	.attr("fill", "white")
+        	.attr("font-size", 20)
+        	.text("Placeholder for text")
+        	//Need to adjust to account for data
+        	//.text( current_risk.toFixed(1) + "%");
+
+		// Initialize slider
+		var slider = d3.slider().min(20).max(90).ticks(15).showRange(true);
+		// Render the slider in the div
+		d3.select('#slider')
+			.call(slider);
+
+
+		function get_probability(){
+
+			age = slider.value()
+
+			//Get the month's value to index into and get the month's coefficient
+			month = document.getElementById('select_month').value
+			month_coefs = {'1': 0, '2': 0, '3': 0, '4': -0.17013001794624028, '8': -0.13606014417372908, 
+						   '9': -0.45441604066029223, '12': 0.19921209071114718, '7': 0.100868996989705, 
+						   '6': 0.32336746751576051, '5': -0.71151225875258073, '11': -0.11720332089236263, 
+						   '10': 0.034294595675198762};
+
+			//Get the day's value to index into and get the day's coefficient
+			day = document.getElementById('select_day').value
+			day_coefs = {'5': 0.062458721723370712, '1': 0.0058157690524025885, 
+						 '4': 0.11281842437414215, '2': -0.1206978973538039, '3': 0};
+
+			//Get the call type for coefficient
+			call = document.getElementById('call_type').value
+			call_coefs = {'1': 0, '2': -0.76033983998142296}
+
+			//Get an array of all selected radio and checkbox inputs; used to get their coefficients
+			radio_features = $.map($("input:radio:checked"), function(elem){return $(elem).val();});
+			checkbox_features = $.map($("input:checkbox:checked"), function(elem){return $(elem).val();});			
+			
+			feature_coefs = {'admin': 0.12240509818632118, 'entre': -0.20083956177800003, 'blue': 0, 
+							 'house': 0.16518904817400865, 'manage': -0.30229935786210521, 
+							 'retired': -0.17289725259347491, 'self': -0.042935699031480583, 
+							 'services': 0.13048128388463515, 'student': 0.03173591045623636, 
+							 'tech': 0.17704270122710883, 'unemp': 0.2369673426454682,
+							 'divorced': 0.011927654623306498, 'single': 0.01483622086341925, 'married': 0,
+							 'fouryear': -0.48974757732023166,'sixyear': -0.17283280096342471, 
+							 'nineyear': 0.31244717905491881, 'highschool': 0.11902499271975939,
+							 'illiterate': -0.02740848711172288, 'prof': -0.0062624464460797067, 'degree': 0, 
+							 'housing': 0.076032019623572714, 'personal': -0.12359571436391532, 
+							 'default': -0.0060738727652772358};
+
+			//Intercept
+			var log_intercept = 0.0028727;
+
+			//Age mean/std = 39.0110957004, 10.0528362304
+
+			//Get the number inputs for the macro data, scales them, and multiplies by their coefficients
+			emp_rate = ((d3.select("#emp_var_rate").node().value - -0.0342579750347) / 1.59074291039) * -0.30596712603746062;
+			cons_price = ((d3.select("#cons_price_idx").node().value - 93.5391391586) / 0.586995613887) * 0.45907663306645952;
+			cons_conf = ((d3.select("#cons_conf_idx").node().value - -40.6429033749) / 4.68400049543) * 0.033017224942857658;
+			euribor = ((d3.select("#euribor3m").node().value - 3.49096948682) / 1.76955276091) * -0.0033099688273541842;
+			nr_emp = ((d3.select("#nr_employed").node().value - 5161.56042534) / 76.3772589995) * -0.0085402395153031645;
+
+			//Sums up the radio and checkbox coefficients
+			sum = 0
+			for (i = 0; i < radio_features.length; i++){
+				sum += feature_coefs[radio_features[i]];
+			};
+
+			for (j = 0; j < checkbox_features.length; j++){
+				sum += feature_coefs[checkbox_features[j]];
+			};
+
+			var prob = 1 / (1 + Math.exp(-(log_intercept + month_coefs[month] + day_coefs[day] + sum + emp_rate + cons_price 
+						+ cons_conf + euribor + nr_emp + call_coefs[call])));
+
+			//console.log(prob);
+			return prob
+		}
+
+
+		d3.selectAll("input[type='radio']").on("click", function(){
+			get_probability()
+		});
+
+		d3.selectAll("input[type='checkbox']").on("click", function(){
+			get_probability()
+		});
+
+		d3.selectAll("input[type='number']").on("input", function(){
+			get_probability()
+		});
+
+		var prob = get_probability(); 
+            d3.select("#probbar")
+                .attr("width", prob_scale(prob));
+            //d3.select("#percent_text")
+             //    .attr("x", chance_scale(prob-5))
+              //   .text(chance.toFixed(1) + "%");*/
+		</script>
+
+		</div>
+		
+
+   </body>
+</html>
